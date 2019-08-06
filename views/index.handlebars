@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://code.jquery.com/jquery.js"></script>
+
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>Burger Devour!</h1>
+
+
+
+  <ul>
+    {{!-- for each burger --}}
+    {{#each burger}}
+    {{!-- unless it is devoured --}}
+    {{#unless devoured}}
+    {{!-- make a list item with the text content of the current burger_name --}}
+    <li>{{burger_name}}</li>
+    {{!-- create a button --}}
+    <button class="devourBtn" id={{this.id}}>Devour</button>
+    {{/unless}}
+    {{/each}}
+  </ul>
+  <input id="burgerInput">
+  <button id="addBtn">Add Burger</button>
+
+</body>
+<script>
+
+  //When the devour button is clicked
+  $(".devourBtn").click(function (event) {
+    //prevent the default action
+    event.preventDefault()
+
+    // store the id of that button in a variable called id
+    var id = $(this).attr("id")
+
+    // make a put call to the to the server 
+    $.ajax("/api/burgers/" + id + "/1/", {
+      type: "PUT",
+      success: location.reload()
+    })
+  })
+  //When the addBtn is clicked 
+  $("#addBtn").click(function (event) {
+    //prevent the default action
+    event.preventDefault();
+    //store the value of THIS id attribute
+    var id = $(this).attr("id")
+    //make a object that named data
+    var data = {
+      //set a key value pair with the key as burger_name and the value as the #burgerInput box
+      burger_name: $("#burgerInput").val()
+
+    }
+    //make a post call to the /api/burgers url , pass through the data object , and then create a callback function
+    $.post("/api/burgers/", data, function (res) {
+      //******Inside call back function
+      burger_name = ""
+      //reload the browser to show the add burger
+      location.reload();
+
+    })
+  })
+</script>
+
+</html>
